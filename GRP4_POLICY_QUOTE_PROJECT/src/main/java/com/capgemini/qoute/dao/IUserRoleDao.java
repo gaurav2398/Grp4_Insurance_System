@@ -7,7 +7,7 @@ import com.capgemini.quote.entity.User;
 
 public interface IUserRoleDao {
 
-	public User getUserById(String userid);
+	public User getUserById(String userName);
 	public abstract List<Role> getRoleList();
 	public void createUser(User user);
 	public User Login();

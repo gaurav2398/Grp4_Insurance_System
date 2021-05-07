@@ -188,11 +188,8 @@ INSERT INTO Policy_Question Values ('MERCHANT','MERC_1008',35,'Liablity Coverage
 =============================================================================
 
 create table Policy_question_weightage(
-
 options varchar2(20),
 weigtage number(10)
-
-
 );
 
 INSERT INTO Policy_question_weightage ( ' Option1',200);

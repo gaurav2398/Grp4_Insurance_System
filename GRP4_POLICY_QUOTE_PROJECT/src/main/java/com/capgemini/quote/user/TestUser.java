@@ -1,14 +1,17 @@
 package com.capgemini.quote.user;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Scanner;
 
 import com.capgemini.qoute.dao.IAccountDao;
 import com.capgemini.qoute.dao.IBusinessSegmentDao;
+import com.capgemini.qoute.dao.IPolicyDao;
 import com.capgemini.qoute.dao.IPolicyQuestionsDao;
 import com.capgemini.qoute.dao.IUserRoleDao;
 import com.capgemini.qoute.dao.ImplAccountDao;
 import com.capgemini.qoute.dao.ImplBusinessSegmentDao;
+import com.capgemini.qoute.dao.ImplPolicyDao;
 import com.capgemini.qoute.dao.ImplPolicyQuestionDao;
 import com.capgemini.qoute.dao.ImplUserRoleDao;
 import com.capgemini.quote.entity.Account;
@@ -21,7 +24,9 @@ public class TestUser {
 	static IAccountDao daoAccount = new ImplAccountDao();
 	static IBusinessSegmentDao daoBusiness = new ImplBusinessSegmentDao();
 	static IPolicyQuestionsDao daoPolQues = new ImplPolicyQuestionDao();
-	static Account acc;
+	static IPolicyDao daoPolicy = new ImplPolicyDao();
+	static List<Account> accountObject;
+	static Account accountObj;
 	static String userName = null, cont = null;
 	static Scanner sc;
 
@@ -29,25 +34,7 @@ public class TestUser {
 
 		sc = new Scanner(System.in);
 
-		do {
-			User u = dao.Login();
-			if (u == null) {
-				System.out.println("Do you want to continue enter 'yes' or 'no'");
-				cont = sc.next();
-			} else {
-				if (u.getRoleCode().equals("1")) {
-					System.out.println("You have loged in as Insured "+u.getUserName());
-					methodInsured();
-				} else if (u.getRoleCode().equals("2")) {
-					System.out.println("You have loged in as Agent "+u.getUserName());
-					methodAgent();
-				} else if (u.getRoleCode().equals("3")) {
-					System.out.println("You have loged in as Admin "+u.getUserName());
-					methodAdmin();
-				}
-			}
-
-		} while (cont.equals("yes"));
+		userVerification();
 
 //		System.out.println(dao.getRoleList());
 //		String userType = sc.next();
@@ -93,42 +80,89 @@ public class TestUser {
 
 	}
 
+	public static void userVerification() {
+		do {
+			User u = dao.Login();
+			if (u == null) {
+				System.out.println("Do you want to continue enter 'yes' or 'no'");
+				cont = sc.next();
+			} else {
+				if (u.getRoleCode().equals("1")) {
+					System.out.println(u.getUserName() + " You have loged in as Insured ");
+					methodInsured(u);
+				} else if (u.getRoleCode().equals("2")) {
+					System.out.println(u.getUserName() + " You have loged in as Agent");
+					methodAgent(u);
+				} else if (u.getRoleCode().equals("3")) {
+					System.out.println(u.getUserName() + " You have loged in as Admin ");
+					methodAdmin();
+				}
+			}
+
+		} while (cont.equals("yes"));
+	}
+
 	public static void findingUserType(String userName, String password) {
 	}
 
-	public static void methodInsured() {
+	public static void methodInsured(User user) {
 		do {
-			System.out.println("1. Create Account");
-			System.out.println("2. View Ploicy");
+			System.out.println("1. View Policy");
+			System.out.println("2. Create Account (if account not created)");
+			System.out.println("3. Show Account");
+			System.out.println("4. Exit");
 			System.out.println("Enter Your Choice");
 			int choice = sc.nextInt();
 			switch (choice) {
 			case 1:
-				String insuredName, insuredStreet, insuredCity, insuredState, busSegName;
-				int insuredZip;
-				double accountNumber;
+				accountObject = daoAccount.showAccountByUserName(user.getUserName());
+				System.out.println(daoPolicy.showPolicyByUserName(accountObject.get(0).getAccount_Number()));
+				break;
+			case 2:
+				String account_Number, insured_Name, insured_Street, insured_City, insured_State;
+				String insured_Zip, business_Segment_Name, user_Name;
+				if (user == null) {
+					System.out.println(daoBusiness.showBusinessSegmentList());
+					System.out.println("Enter Account Number : ");
+					account_Number = sc.next();
+					System.out.println("Enter Name : ");
+					insured_Name = sc.next();
+					System.out.println("Enter Street : ");
+					insured_Street = sc.next();
+					System.out.println("Enter City : ");
+					insured_City = sc.next();
+					System.out.println("Enter State : ");
+					insured_State = sc.next();
+					System.out.println("Enter Zip Code : ");
+					insured_Zip = sc.next();
 
-				User userName;
+					System.out.println("\nAvailable Business");
+					System.out.println(daoBusiness.showBusinessSegmentList());
+					System.out.println("\nEnter Business Segment Name : ");
+					business_Segment_Name = sc.next();
+					user_Name = user.getUserName();
 
-				System.out.println("Enter Name : ");
-				insuredName = sc.next();
-				System.out.println("Enter Street : ");
-				insuredStreet = sc.next();
+					// If user name already exists TRY CATCH
+					Account account = new Account(account_Number, insured_Name, insured_Street, insured_City,
+							insured_State, insured_Zip, business_Segment_Name, user_Name);
+					daoAccount.createAccount(account);
+				} else {
+					System.out.println("Account Already Exists");
+					methodInsured(user);
+				}
 
-				System.out.println("Enter City : ");
-				insuredCity = sc.next();
-				System.out.println("Enter State : ");
-				insuredState = sc.next();
-				System.out.println("Enter Business Segment Name: ");
-				busSegName = sc.next();
-				System.out.println("Enter Zip Code : ");
-				insuredZip = sc.nextInt();
-				System.out.println("Enter Account Number : ");
-				accountNumber = sc.nextDouble();
+				break;
+			case 3:
+				accountObject = daoAccount.showAccountByUserName(user.getUserName());
+				System.out.println(accountObject);
+				break;
+			case 4:
+				System.out.println("Successfully Exited");
+				userVerification();
 				break;
 			default:
 				System.out.print("You have entered wrong choice\nPlease try again...");
-				methodAdmin();
+				methodInsured(user);
 				break;
 			}
 			System.out.println("Do you want to continue enter 'yes' or 'no'");
@@ -138,8 +172,82 @@ public class TestUser {
 		System.out.println("Thank You For Using Our System");
 	}
 
-	public static void methodAgent() {
+	public static void methodAgent(User user) {
+		do {
+			System.out.println("1. Create Insured Account");
+			System.out.println("2. Show My Insured Account");
+			System.out.println("3. Create Insured Policy");
+			System.out.println("4. Show Insured Policy");
+			System.out.println("5. Exit");
+			System.out.println("Enter Your Choice");
+			int choice = sc.nextInt();
+			switch (choice) {
+			case 1:
+				String account_Number, insured_Name, insured_Street, insured_City, insured_State;
+				String insured_Zip, business_Segment_Name, user_Name;
 
+				System.out.println("Enter User Name : ");
+				user_Name = sc.next();
+				User u = dao.getUserById(user_Name);
+				if (u == null) {
+					System.out.println("Invalid User Name");
+					break;
+				} else {
+					System.out.println("Enter Account Number : ");
+					account_Number = sc.next();
+					
+					if (daoAccount.getUserByAccountNumber(account_Number) == null) {
+						System.out.println("Enter Name : ");
+						insured_Name = sc.next();
+						System.out.println("Enter Street : ");
+						insured_Street = sc.next();
+						System.out.println("Enter City : ");
+						insured_City = sc.next();
+						System.out.println("Enter State : ");
+						insured_State = sc.next();
+						System.out.println("Enter Zip Code : ");
+						insured_Zip = sc.next();
+
+						System.out.println("\nAvailable Business");
+						System.out.println(daoBusiness.showBusinessSegmentList());
+						System.out.println("\nEnter Business Segment Name : ");
+						business_Segment_Name = sc.next();
+
+						// If user name already exists TRY CATCH
+						Account account = new Account(account_Number, insured_Name, insured_Street, insured_City, insured_State,
+								insured_Zip, business_Segment_Name, user_Name,user.getUserName());
+						daoAccount.createAccount(account);
+						break;
+					} else {
+						System.out.println("Account Number Already Exists");
+						break;
+					}					
+				}			
+
+			case 2:
+				System.out.println(daoAccount.showAccountCreatedById(user.getUserName()));
+				break;
+			case 3:
+				
+				break;
+			case 4:
+
+				break;
+
+			case 5:
+				System.out.println("Successfully Exited");
+				userVerification();
+				break;
+			default:
+				System.out.print("You have entered wrong choice\nPlease try again...\n");
+				methodAgent(user);
+				break;
+			}
+			System.out.println("Do you want to continue enter 'yes' or 'no'");
+			cont = sc.next();
+		} while (cont.equals("yes"));
+
+		System.out.println("Thank You For Using Our System");
 	}
 
 	public static void methodAdmin() {
@@ -176,7 +284,7 @@ public class TestUser {
 
 				break;
 			default:
-				System.out.print("You have entered wrong choice\nPlease try again...");
+				System.out.print("You have entered wrong choice\nPlease try again...\n");
 				methodAdmin();
 				break;
 			}

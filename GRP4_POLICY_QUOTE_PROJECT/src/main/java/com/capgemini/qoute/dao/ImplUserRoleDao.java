@@ -19,8 +19,8 @@ public class ImplUserRoleDao implements IUserRoleDao {
 	}
 
 	@Override
-	public User getUserById(String userid) {
-		User user = em.find(User.class, userid);
+	public User getUserById(String userName) {
+		User user = em.find(User.class, userName);
 		return user;
 	}
 
@@ -40,7 +40,8 @@ public class ImplUserRoleDao implements IUserRoleDao {
 	@Override
 	public User Login() {
 		Scanner sc = new Scanner(System.in);
-		System.out.println("Enter User Name");
+		System.out.println("***Enter Your Login Details***");
+		System.out.println("\nEnter User Name");
 		String userName = sc.next();
 		System.out.println("Enter Password");
 		String password = sc.next();
@@ -52,13 +53,14 @@ public class ImplUserRoleDao implements IUserRoleDao {
 		else{
 			if (user.getUserName().equals(userName) && user.getPassword().equals(password)) {
 				System.out.println("****Online Insurance Quote Generation System****");
-				System.out.println(user.getUserName() + " You have successfully login");
-				user.getUserName();
+				return user;
 			}
 			else {
-				System.out.println("Wrong Credentials");
+				System.out.println("Wrong Credentials");	
+				return null;			
 			}						
 		}
-		return user;
+
+		return null;
 	}
 }

@@ -10,7 +10,7 @@ import javax.persistence.Table;
 public class Account {
 
 	@Id
-	double Account_Number;
+	String Account_Number;
 	String Insured_Name;
 	String Insured_Street;
 	String Insured_City;
@@ -18,9 +18,10 @@ public class Account {
 	String Insured_Zip;
 	String Business_Segment_Name; 
 	String User_Name;
+	String createdby;
 
 
-	public Account(double account_Number, String insured_Name, String insured_Street, String insured_City,
+	public Account(String account_Number, String insured_Name, String insured_Street, String insured_City,
 			String insured_State, String insured_Zip, String business_Segment_Name, String user_Name) {
 		super();
 		Account_Number = account_Number;
@@ -33,14 +34,29 @@ public class Account {
 		User_Name = user_Name;
 	}
 
+	public Account(String account_Number, String insured_Name, String insured_Street, String insured_City,
+			String insured_State, String insured_Zip, String business_Segment_Name, String user_Name,
+			String createdby) {
+		super();
+		Account_Number = account_Number;
+		Insured_Name = insured_Name;
+		Insured_Street = insured_Street;
+		Insured_City = insured_City;
+		Insured_State = insured_State;
+		Insured_Zip = insured_Zip;
+		Business_Segment_Name = business_Segment_Name;
+		User_Name = user_Name;
+		this.createdby = createdby;
+	}
+
 	public Account() {
 		super();
 	}
 	
-	public double getAccount_Number() {
+	public String getAccount_Number() {
 		return Account_Number;
 	}
-	public void setAccount_Number(double account_Number) {
+	public void setAccount_Number(String account_Number) {
 		Account_Number = account_Number;
 	}
 	public String getInsured_Name() {
@@ -85,13 +101,23 @@ public class Account {
 	public void setUser_Name(String user_Name) {
 		User_Name = user_Name;
 	}
+	
+	public String getCreatedby() {
+		return createdby;
+	}
+
+	public void setCreatedby(String createdby) {
+		this.createdby = createdby;
+	}
+
 	@Override
 	public String toString() {
-		return "Account [Account_Number=" + Account_Number + ", Insured_Name=" + Insured_Name + ", Insured_Street="
+		return "\nAccount_Number=" + Account_Number + ", Insured_Name=" + Insured_Name + ", Insured_Street="
 				+ Insured_Street + ", Insured_City=" + Insured_City + ", Insured_State=" + Insured_State
 				+ ", Insured_Zip=" + Insured_Zip + ", Business_Segment_Name=" + Business_Segment_Name + ", User_Name="
-				+ User_Name + "]";
+				+ User_Name + ", createdby=" + createdby;
 	}
+ 
 
 	
 }
