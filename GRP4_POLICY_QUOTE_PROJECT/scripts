@@ -1,0 +1,219 @@
+ CREATE TABLE Role(
+        
+      RoleCode Number(5),
+      RoleName varchar2(20),
+     
+     CONSTRAINT pk_Role_RoleCode PRIMARY KEY(RoleCode)
+             
+
+);
+
+INSERT INTO Role values(1,'Insured');
+INSERT INTO Role values(2,'Agent');
+INSERT INTO Role values(3,'Admin');
+
+
+
+======================================================
+Create table UserRole  (
+UserName Varchar2(20) NOT NULL,
+Password  Varchar2(12) NOT NULL,
+Rolecode Number(10) NOT NULL,
+CONSTRAINT fk_UserRole_RoleCode FOREIGN KEY(RoleCode) references Role,
+CONSTRAINT rf_user_name PRIMARY KEY(UserName)
+);
+
+
+INSERT INTO UserRole values ('jay','jay123',1);
+INSERT INTO UserRole values ('rejesh','rajesh123',2);
+INSERT INTO UserRole values ('kunal','kunal123',3);
+
+=========================================================================
+
+CREATE TABLE Business_segment(
+
+     bus_seg_id VARCHAR2(20),
+     bus_id NUMBER(10),
+     Business_Segment_Name Varchar2(30),
+
+CONSTRAINT PK_Business_Segment_Name Primary key(Business_Segment_Name)
+
+);
+
+INSERT INTO Business_segment values('AUTO',1,'BUSINESSAUTO');
+INSERT INTO Business_segment values('REST',2,'RESTAURANT');
+INSERT INTO Business_segment values('APART',3,'APARTMENT');
+INSERT INTO Business_segment values('MERCH',4,'MERCHANT');
+
+
+==================================================================================
+
+CREATE TABLE Account
+(
+
+Account_Number NUMBER(10) NOT NULL,
+Insured_Name Varchar2(30),
+Insured_Street Varchar2(40),
+Insured_City Varchar2(15),
+Insured_State Varchar2(15),
+Insured_Zip Varchar2(10),
+Business_Segment_Name Varchar2(30),
+User_Name Varchar2(20),
+CONSTRAINTS PK_Account_Number  PRIMARY KEY (Account_Number),
+CONSTRAINT rf_foreign FOREIGN KEY( User_Name) references UserRole
+CONSTRAINT rf_foreign1 FOREIGN KEY( Business_Segment_Name) references Business_segment
+);
+
+INSERT INTO Account VALUES(9999999,'Jay','kalewadi','pune','MAHARASHRA','55455','BUSINESSAUTO','jay');
+==================================================================================
+
+Policy:
+
+create sequence Policy_seq increment by 1 start with 10001;
+
+Create table Policy (
+Policy_Number Number(10),
+Policy_Premium number(10,2),
+Account_Number Number(10),
+CONSTRAINT Pr_key PRIMARY KEY(Policy_Number),
+CONSTRAINT fk_key FOREIGN KEY(Account_Number) references Account
+);
+
+
+INSERT INTO Policy values(Policy_seq.NEXTVAL,2500,9999999);
+
+
+
+
+=====================================================================================
+ Create table Policy_Details(
+ Policy_Number Number(10),
+ Business_Segment_Name Varchar2(30),
+ Answer Number(30),
+CONSTRAINT FK_1 FOREIGN KEY (Business_Segment_Name) references Business_segment,
+ CONSTRAINT FK_2 FOREIGN KEY (Policy_Number) references Policy
+ );
+
+INSERT into Policy_Details values(10001,'BUSINESSAUTO',888);
+
+
+*********************************************************
+======================================================================================
+
+Policy Ouestions:
+
+Create table Policy_Question(
+
+Business_Segment_Name Varchar2(30),
+Qid_seq varchar2(50),
+Qid  Number(10),
+Q_desc Varchar2(100),
+Option1 Varchar2(50),
+Option2 Varchar2(50),
+Option3 Varchar2(50),
+CONSTRAINT PK_Policy_Question_qid PRIMARY KEY(  Qid),
+CONSTRAINT FK_Policy_Question_Bus_Name FOREIGN KEY(Business_Segment_Name) references Business_segment
+);
+
+INSERT INTO Policy_Question VALUES('BUSINESSAUTO','AUTO_1001',1,'Vehicle Type','Light','Heavy','Truck');
+INSERT INTO Policy_Question VALUES('BUSINESSAUTO','AUTO_1002',2,'Vehicle Model Year','less than 2000','2001 to 2010','More than 2010');
+INSERT INTO Policy_Question VALUES('BUSINESSAUTO','AUTO_1003',3,'Vihicle model','high segment','mid segment','economy');
+INSERT INTO Policy_Question VALUES('BUSINESSAUTO','AUTO_1004',4,'Daily compute Distance','less than 21','21 to 50','greater than 50');
+INSERT INTO Policy_Question VALUES('BUSINESSAUTO','AUTO_1005',5,'Service Center','authorized','not authorizedd','');
+INSERT INTO Policy_Question VALUES('BUSINESSAUTO','AUTO_1006',6,'collision coverage limit','10000 to 30000','30001 to 50000','50001 to 100000');
+INSERT INTO Policy_Question VALUES('BUSINESSAUTO','AUTO_1007',7,'Bodily injury limit','10000 to 30000','30001 to 50000','50001 to 100000');
+INSERT INTO Policy_Question VALUES('BUSINESSAUTO','AUTO_1008',8,'uninsured motorist','10000 to 30000','30001 to 50000','50001 to 100000');
+INSERT INTO Policy_Question VALUES('BUSINESSAUTO','AUTO_1009',9,'unknown hit or theft coverage','10000 to 30000','30001 to 50000','50001 to 100000');
+INSERT INTO Policy_Question VALUES('BUSINESSAUTO','AUTO_1010',10,'Property & Liablity','10000 to 30000','10000 to 30000','10000 to 30000');
+
+INSERT INTO Policy_Question VALUES('Restaurant','REST_1001',11,'Restaurant type','Only Dining','Dining with bar','Dining with bar and enterntainment');
+INSERT INTO Policy_Question VALUES('RESTAURANT','REST_1002',12,'Restaurant SQ Ft','less than 1500 sq ft','from 1500 to 5000 sq ft','more than 5000');
+INSERT INTO Policy_Question VALUES('RESTAURANT','REST_1003',13,'Number of sprinklers','up to 20','21 to 40',' more than 40');
+INSERT INTO Policy_Question VALUES('RESTAURANT','REST_1004',14,'No of cylinders in kitchen','up to 5','from 6 to 15',' more than 15');
+INSERT INTO Policy_Question VALUES('RESTAURANT','REST_1005',15,'Fine arts',' 5000 to 15000','15000 to 30000','more than 30000');
+INSERT INTO Policy_Question VALUES('RESTAURANT','REST_1006',16,'Property Damage','up to 5L','from 6 to 15 lac','more than 15');
+INSERT INTO Policy_Question VALUES('RESTAURANT','REST_1007',17,'Equipment breakdown','upto 50k','from 50k to 2 lac','more than 2 lac');
+INSERT INTO Policy_Question VALUES('RESTAURANT','REST_1008',18,'Liablity coverage','10k to 15k','15k to 30k','more than 30k');
+INSERT INTO Policy_Question VALUES('RESTAURANT','REST_1009',19,'Bodily injured','upto 25000','25001 to 50000','more than 50000');
+
+
+INSERT INTO Policy_Question Values('APARTMENT','APART_1001',20,'Apartment Sq.Ft',
+'upto 1500 sq.ft','from 1500 to 5000 sq.ft','more than 5000');
+
+INSERT INTO Policy_Question Values('APARTMENT','APART_1002',21,'Number of Sprinklers',
+'upto 5','from 6 to 10','more than 5');
+
+INSERT INTO Policy_Question Values('APARTMENT','APART_1003',22,'Build Year',
+'before 2000','from 2000 to 2010','after 2010');
+
+INSERT INTO Policy_Question Values('APARTMENT','APART_1004',23,'Property Damage',
+'upto 5,00,000','5,00,001 to 10,00,000','more than 10,00,000');
+
+INSERT INTO Policy_Question Values('APARTMENT','APART_1005',24,'Bodily Injury Limit',
+'50,000 - 1,00,000','1,00,001 - 3,00,000','3,00,001 -5,00,000');
+
+INSERT INTO Policy_Question Values('APARTMENT','APART_1006',25,'Number of floors',
+'Less than 10','10 to 30','more than 30');
+
+INSERT INTO Policy_Question Values('APARTMENT','APART_1007',26,'Numbers of Fire Exists',
+'1','2 to 3','more than 3');
+
+INSERT INTO Policy_Question Values('APARTMENT','APART_1008',27,'Asset Theft Limit',
+'upto 50000','50,000 to 1,00,000','1,00,001 to 2,00,000');
+
+INSERT INTO Policy_Question Values ('MERCHANT','MERC_1001',28,'Business type',
+'General Store','Hardware','Clothing');
+
+INSERT INTO Policy_Question Values ('MERCHANT','MERC_1002',29,'Asset Value',
+'less than 10,00,000','10,00,001 to 25,00,000','more than 25,00,001');
+
+INSERT INTO Policy_Question Values ('MERCHANT','MERC_1003',30,'Inflammable Objects',
+'Yes','No', ' ');
+
+
+INSERT INTO Policy_Question Values ('MERCHANT','MERC_1004',31,'Property size',
+'Less than 5000 sq ft','5000 to 10,000 sq ft','more than 10,000 sq ft');
+
+INSERT INTO Policy_Question Values ('MERCHANT','MERC_1005',32,'Property Damage',
+'upto 5,00,000','5,00,000 to 10,00,000','10,00,000 to 15,00,000');
+
+INSERT INTO Policy_Question Values ('MERCHANT','MERC_1006',33,'Bodily Injury',
+'10000 to 30000','30001 to 50000','50001 to 10000');
+
+INSERT INTO Policy_Question Values ('MERCHANT','MERC_1007',34,'Asset Theft Limit',
+'upto 50000','50,000 to 1,00,000','1,00,001 to 2,00,000');
+
+INSERT INTO Policy_Question Values ('MERCHANT','MERC_1008',35,'Liablity Coverage',
+'10000 to 30000','from 10000 to 30000','10000 to 30000');
+=============================================================================
+
+create table Policy_question_weightage(
+
+options varchar2(20),
+weigtage number(10)
+
+
+);
+
+INSERT INTO Policy_question_weightage ( ' Option1',200);
+
+INSERT INTO Policy_question_weightage ( ' Option2',300);
+
+INSERT INTO Policy_question_weightage ( ' Option3',500);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
